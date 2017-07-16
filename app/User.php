@@ -26,4 +26,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function threads()
+    {
+          return $this->hasMany(THread::class);
+    }
+
+    public function makeThread($thread)
+    {
+         return $this->threads()->create($thread); 
+    }
 }
