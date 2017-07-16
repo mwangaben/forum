@@ -12,7 +12,7 @@ class ReplyTest extends TestCase
 	use DatabaseMigrations;
 
 	  /** @test **/ 
-	function it_a_reply_has_a_owner()
+	function a_reply_has_a_owner()
 	{
         $reply = factory(Reply::class)->create();
         $this->assertInstanceOf('App\User', $reply->owner);		
