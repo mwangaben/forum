@@ -17,7 +17,7 @@ class ThreadTest extends TestCase
     public function setUp()
     {
     	  parent::setUp();
-    	  $this->thread = factory(Thread::class)->create();
+    	  $this->thread = create(Thread::class);
     }
     public function a_thread_has_replies()
     {
@@ -32,7 +32,7 @@ class ThreadTest extends TestCase
      }
 
        /** @test **/ 
-    function a_thread_can_a_adda_reply()
+    function a_thread_has_a__reply()
     {
         $this->thread->addReply([
             'body' => 'Foo',
@@ -40,6 +40,20 @@ class ThreadTest extends TestCase
             ]);
        $this->assertCount(1, $this->thread->replies);
     }
+
+     /** @test **/ 
+    function a_thread_belongs_to_a_channel()
+    {
+        $this->assertInstanceOf('App\Channel', $this->thread->channel);
+    }
+
+      /** @test **/ 
+    function it_a_thread_can_make_a_string_path()
+    {
+        $this->assertEquals('/threads/'.$this->thread->channel->slug .'/'. $this->thread->id,$this->thread->path());       
+    }
+
+
      
       
 }
