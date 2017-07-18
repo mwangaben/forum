@@ -37,11 +37,30 @@ class CreateTHreadTest extends TestCase
 
 		$thread = make(Thread::class);
 
-		$this->post('/threads', $thread->toArray());
+		$response = $this->post('/threads', $thread->toArray());
 
-		$this->get('threads')
+		$this->get($response->headers->get('Location'))
 		      ->assertSee($thread->title);
 	}
+
+	  /** @test **/ 
+	function a_thread_requires_a_title()
+	{
+        $this->publishThread()
+             ->assertSessionHasErrors('title');
+
+	}
+
+    protected function publishThread()
+    {
+        $this->withExceptionHandling()->signIn();
+
+        $thread = make(Thread::class, ['title' => null]);
+
+        return $this->post('/threads', $thread->toArray());
+               
+    }
+
 }
 
 

@@ -41,6 +41,9 @@ class ThreadsController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'title' => 'required'
+            ]);
         Thread::create([
            'user_id' =>auth()->user()->id,
            'channel_id' => $request->channel_id,
@@ -57,7 +60,7 @@ class ThreadsController extends Controller
      * @param  \App\Thread  $thread
      * @return \Illuminate\Http\Response
      */
-    public function show(Thread $thread)
+    public function show($channelId, Thread $thread)
     {
         return view('threads.show', compact('thread'));
     }
