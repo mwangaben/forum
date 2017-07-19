@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\User;
 use App\Thread;
+use App\Channel;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -46,16 +47,43 @@ class CreateTHreadTest extends TestCase
 	  /** @test **/ 
 	function a_thread_requires_a_title()
 	{
-        $this->publishThread()
+        $this->publishThread(['title' => null])
              ->assertSessionHasErrors('title');
 
 	}
 
-    protected function publishThread()
+	  /** @test **/ 
+	function a_thread_requires_a_body()
+	{
+		$this->publishThread(['body' => null])
+		     ->assertSessionHasErrors('body');
+	}
+
+	  /** @test **/ 
+	function a_threads_requires_a_valid_channel()
+	{
+		factory(Channel::class, 2)->create();
+
+        $this->publishThread(['channel_id' => null])
+             ->assertSessionHasErrors('channel_id');
+
+         $this->publishThread(['channel_id' => 999])
+         	  ->assertSessionHasErrors('channel_id');    		
+	}
+
+	  /** @test **/ 
+	function it_a_thread_requires_a_user_id()
+	{
+		$this->publishThread(['user_id' =>null])
+		  	  ->assertSessionHasErrors('user_id');		
+	}
+	
+
+    protected function publishThread($overrides = [])
     {
         $this->withExceptionHandling()->signIn();
 
-        $thread = make(Thread::class, ['title' => null]);
+        $thread = make(Thread::class, $overrides);
 
         return $this->post('/threads', $thread->toArray());
                
