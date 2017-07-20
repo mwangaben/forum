@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Reply;
 use App\Thread;
+use App\Channel;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -40,6 +41,20 @@ class ReadThreadsTest extends TestCase
         $this->get($this->thread->path())
              ->assertSee($reply->body);       
     }
+
+      /** @test **/ 
+  function a_user_can_filter_threads_according_to_a_channel()
+  {
+        $channel = create(Channel::class);
+
+        $threadWithChannel = create(Thread::class, ['channel_id' => $channel->id]);
+        $threadwithoutAChannel = create(Thread::class);
+
+        $this->get('threads/'. $channel->slug)
+            ->assertSee($threadWithChannel->title)
+            ->assertDontSee($threadwithoutAChannel->title);
+
+  }
 
 
 }
