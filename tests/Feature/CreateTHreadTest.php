@@ -71,12 +71,12 @@ class CreateTHreadTest extends TestCase
          	  ->assertSessionHasErrors('channel_id');    		
 	}
 
-	  /** @test **/ 
-	function it_a_thread_requires_a_user_id()
-	{
-		$this->publishThread(['user_id' =>null])
-		  	  ->assertSessionHasErrors('user_id');		
-	}
+	//   /** @test **/ 
+	// function it_a_thread_requires_a_user_id()
+	// {
+	// 	$this->publishThread(['user_id' =>null])
+	// 	  	  ->assertSessionHasErrors('user_id');		
+	// }
 	
 
     protected function publishThread($overrides = [])
