@@ -68,6 +68,3 @@ class ReadThreadsTest extends TestCase
             ->assertSee($threadByMwangaBen->title)
             ->assertDontSee($threadNotByMwangaBen->title);
   }
-
-
-}
