@@ -2,51 +2,56 @@
 
 namespace App;
 
-use App\Reply;
 use App\Channel;
+use App\Reply;
 use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
-    
-   protected $fillable = ['body', 'title', 'user_id', 'channel_id'];
 
-   protected static function boot(){
+    protected $fillable = ['body', 'title', 'user_id', 'channel_id'];
+    protected $with = ['creator', 'channel'];
 
-         parent::boot();
+    protected static function boot()
+    {
 
-         static::addGlobalScope('replyCount', function ($builder) {
-             $builder->withCount('replies');
-         });
-   }
+        parent::boot();
+
+        static::addGlobalScope('replyCount', function ($builder) {
+            $builder->withCount('replies');
+        });
+
+
+    }
 
     public function path()
     {
-    	  return  "/threads/{$this->channel->slug}/{$this->id}";
+        return "/threads/{$this->channel->slug}/{$this->id}";
     }
 
     public function replies()
     {
-    	  return $this->hasMany(Reply::class);
+        return $this->hasMany(Reply::class);
+            
     }
 
     public function channel()
     {
-          return $this->belongsTo(Channel::class);
+        return $this->belongsTo(Channel::class);
     }
 
     public function creator()
     {
-    	  return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function addReply($reply)
     {
-          return $this->replies()->create($reply);
+        return $this->replies()->create($reply);
     }
 
     public function scopeFilter($query, $filters)
     {
-         return $filters->apply($query); 
+        return $filters->apply($query);
     }
 }

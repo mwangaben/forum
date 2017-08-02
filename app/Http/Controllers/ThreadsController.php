@@ -54,15 +54,15 @@ class ThreadsController extends Controller
             'title'      => 'required',
             'body'       => 'required',
             'channel_id' => 'required|exists:channels,id',
-            'user_id'    => 'required',
+            // 'user_id'    => 'required',
         ]);
-        Thread::create([
-            'user_id'    => auth()->user()->id,
-            'channel_id' => $request->channel_id,
-            'body'       => $request->body,
-            'title'      => $request->title,
-        ]);
-        // auth()->user()->makeThread($request->toArray());
+        // Thread::create([
+        //     'user_id'    => auth()->id(),
+        //     'channel_id' => $request->channel_id,
+        //     'body'       => $request->body,
+        //     'title'      => $request->title,
+        // ]);
+        auth()->user()->makeThread($request->toArray());
         return redirect('/threads');
     }
 
@@ -76,7 +76,7 @@ class ThreadsController extends Controller
     {
         return view('threads.show', [
             'thread'  => $thread,
-            'replies' => $thread->replies()->paginate(1),
+            'replies' => $thread->replies()->paginate(20),
         ]);
     }
 
