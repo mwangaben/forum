@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
-
+    use RecordActivity;
+    
     protected $fillable = ['body', 'title', 'user_id', 'channel_id'];
-    protected $with = ['creator', 'channel'];
+    protected $with     = ['creator', 'channel'];
 
     protected static function boot()
     {
@@ -21,6 +22,10 @@ class Thread extends Model
             $builder->withCount('replies');
         });
 
+        static::deleting(function ($thread) {
+            $thread->replies()->delete();
+        });
+        
 
     }
 
@@ -32,7 +37,7 @@ class Thread extends Model
     public function replies()
     {
         return $this->hasMany(Reply::class);
-            
+
     }
 
     public function channel()
@@ -53,5 +58,10 @@ class Thread extends Model
     public function scopeFilter($query, $filters)
     {
         return $filters->apply($query);
+    }
+
+    public function deleteThread($thread)
+    {
+        return $this->where('thread_id', $thread->id)->delete();
     }
 }

@@ -6,9 +6,19 @@
         <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4>
+                <div class="level">
+                    <h4 class="flex">
                         {{ $thread->title }}
                     </h4>
+                    @can ('update', $thread)
+                    <form method="POST" action="{{ $thread->path() }}">
+                       {{ csrf_field() }}
+                       {{ method_field('DELETE') }}
+                     <button class="btn btn-default" type="submit" ><a href="">Delete Thread</a></button>   
+                       
+                    </form>
+                    @endcan
+                </div>
                 </div>
                 <div class="panel-body">
                     <div class="body">
@@ -48,7 +58,7 @@
                     <p>
                         This Thread was created  {{ $thread->created_at->diffForHumans() }}
                 by
-                        <a href="">
+                        <a href="/profiles/{{ $thread->creator->name }}">
                             {{ $thread->creator->name }}
                         </a>
                         and currently has 

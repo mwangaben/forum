@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Activity;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -27,13 +28,27 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * Override the default route key
+     */
+    
+    public function getRouteKeyName()
+    {
+          return 'name';
+    }
+
     public function threads()
     {
-          return $this->hasMany(THread::class);
+          return $this->hasMany(Thread::class)->latest();
     }
 
     public function makeThread($thread)
     {
          return $this->threads()->create($thread); 
+    }
+
+    public function activity()
+    {
+          return $this->hasMany(Activity::class);
     }
 }
