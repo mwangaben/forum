@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<thread-view inline-template :initial-replies-count="{{ $thread->replies_count }}">
 <div class="container">
     <div class="row">
         <div class="col-md-8">
@@ -13,8 +14,9 @@
                     @can ('update', $thread)
                     <form method="POST" action="{{ $thread->path() }}">
                        {{ csrf_field() }}
+            
                        {{ method_field('DELETE') }}
-                     <button class="btn btn-default" type="submit" ><a href="">Delete Thread</a></button>   
+                     <button class="btn btn-default delete" type="submit" >Delete Thread</button>   
                        
                     </form>
                     @endcan
@@ -24,33 +26,20 @@
                     <div class="body">
                         {{ $thread->body }}
                     </div>
+                    
                 </div>
             </div>
-        @foreach ($replies as $reply)
-        @include('replies.reply');
-        @endforeach
-        {{ $replies->links() }}
 
-        @if (auth()->check())
-            <form action="{{ $thread->path(). '/replies' }}" method="POST">
-                {{ csrf_field() }}
-                <div class="form-group">
-                    <textarea class="form-control" id="body" name="body" placeholder="Add a reply" rows="5">
-                    </textarea>
-                </div>
-                <button class="btn btn-primary" type="submit">
-                    Post
-                </button>
-            </form>
-            @else
-            <p class="text-center">
-                Please
-                <a href="{{ route('login') }}">
-                    sign in
-                </a>
-                to participate in this discussion
-            </p>
-            @endif
+
+            <replies 
+                @created="repliesCount++" 
+                @removed="repliesCount--"> 
+            </replies>
+
+        
+        {{-- {{ $replies->links() }}  --}}
+
+
         </div>
         <div class="col-md-4">
             <div class="panel panel-default">
@@ -62,7 +51,7 @@
                             {{ $thread->creator->name }}
                         </a>
                         and currently has 
-                {{ $thread->replies_count }}
+                <span v-text="repliesCount"></span>
                {{ str_plural('comment', $thread->replies_count) }}
                     </p>
                 </div>
@@ -70,4 +59,5 @@
         </div>
     </div>
 </div>
+</thread-view>
 @endsection

@@ -6,7 +6,6 @@ use App\User;
 
 class ThreadsFilters extends Filters
 {
-
     protected $filters = ['by', 'popular'];
 
     /**
@@ -19,7 +18,6 @@ class ThreadsFilters extends Filters
         $user = User::where('name', $username)->firstOrFail();
 
         return $this->builder->where('user_id', $user->id);
-
     }
     /*
      * Filter the query according to the most popularity  threads
@@ -31,5 +29,4 @@ class ThreadsFilters extends Filters
         $this->builder->getQuery()->orders = [];
         return $this->builder->orderBy('replies_count', 'desc');
     }
-
 }

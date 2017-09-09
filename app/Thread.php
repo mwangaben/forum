@@ -2,14 +2,12 @@
 
 namespace App;
 
-use App\Channel;
-use App\Reply;
 use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
     use RecordActivity;
-    
+
     protected $fillable = ['body', 'title', 'user_id', 'channel_id'];
     protected $with     = ['creator', 'channel'];
 
@@ -23,10 +21,8 @@ class Thread extends Model
         });
 
         static::deleting(function ($thread) {
-            $thread->replies()->delete();
+            $thread->replies->each->delete();
         });
-        
-
     }
 
     public function path()
@@ -37,7 +33,6 @@ class Thread extends Model
     public function replies()
     {
         return $this->hasMany(Reply::class);
-
     }
 
     public function channel()

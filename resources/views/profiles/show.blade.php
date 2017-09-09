@@ -7,12 +7,14 @@
             {{ $profiles->name }}
         </h1>
     </div>
-    @foreach ($activities as  $date => $activity)
+    @forelse ($activities as  $date => $activity)
       <h3 class="page-header">{{ $date }}</h3>
          @foreach ($activity as $record)
            @include("profiles.activities.$record->type", ['activity' =>  $record] )   
          @endforeach
-    @endforeach
+         @empty
+         <h2>Currently there are no activities for this user</h2>
+    @endforelse
             {{-- {{ $threads->links() }} --}}
 </div>
 @stop

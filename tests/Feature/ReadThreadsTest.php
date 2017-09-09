@@ -20,7 +20,6 @@ class ReadThreadsTest extends TestCase
     /** @test **/
     public function a_user_can_browse_all_threads()
     {
-
         $this->get('/threads')
             ->assertSee($this->thread->title);
     }
@@ -51,7 +50,6 @@ class ReadThreadsTest extends TestCase
         $this->get('threads/' . $channel->slug)
             ->assertSee($threadWithChannel->title)
             ->assertDontSee($threadwithoutAChannel->title);
-
     }
 
     /** @test **/

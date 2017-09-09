@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Activity;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -34,21 +33,21 @@ class User extends Authenticatable
     
     public function getRouteKeyName()
     {
-          return 'name';
+        return 'name';
     }
 
     public function threads()
     {
-          return $this->hasMany(Thread::class)->latest();
+        return $this->hasMany(Thread::class)->latest();
     }
 
     public function makeThread($thread)
     {
-         return $this->threads()->create($thread); 
+        return $this->threads()->create($thread);
     }
 
     public function activity()
     {
-          return $this->hasMany(Activity::class);
+        return $this->hasMany(Activity::class);
     }
 }

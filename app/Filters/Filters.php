@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 
 abstract class Filters
 {
-
     protected $request;
     protected $builder;
     protected $filters = [];
@@ -27,7 +26,6 @@ abstract class Filters
             if (method_exists($this, $filter)) {
                 $this->$filter($value);
             }
-
         }
         //
 
@@ -37,9 +35,5 @@ abstract class Filters
     public function getFilters()
     {
         return $this->request->intersect($this->filters);
-
     }
-
-    
-
 }

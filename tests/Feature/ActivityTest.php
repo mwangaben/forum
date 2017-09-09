@@ -10,7 +10,6 @@ use Tests\TestCase;
 
 class ActivityTest extends TestCase
 {
-
     use DatabaseMigrations;
 
     /** @test **/

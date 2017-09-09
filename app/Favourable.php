@@ -2,12 +2,8 @@
 
 namespace App;
 
-use App\Favorite;
-
-
 trait Favourable
 {
-
     public function favorites()
     {
         return $this->morphMany(Favorite::class, 'favorited');
@@ -21,6 +17,12 @@ trait Favourable
         }
     }
 
+    public function unFavorite()
+    {
+        $attributes = ['user_id' => auth()->id()];
+        $this->favorites()->where($attributes)->get()->each->delete();
+    }
+
     public function isFavorited()
     {
         return !!$this->favorites->where('user_id', auth()->id())->count();
@@ -30,4 +32,10 @@ trait Favourable
     {
         return $this->favorites->count();
     }
+
+    public function getIsFavoritedAttribute()
+    {
+        return $this->isFavorited();
+    }
+    
 }

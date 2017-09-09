@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Channel;
 use App\Filters\ThreadsFilters;
 use App\Thread;
-use App\User;
 use Illuminate\Http\Request;
 
 class ThreadsController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth')->except(['index', 'show']);
@@ -55,7 +53,7 @@ class ThreadsController extends Controller
             'body'       => 'required',
             'channel_id' => 'required|exists:channels,id',
             // 'user_id'    => 'required',
-        ]);
+            ]);
         // Thread::create([
         //     'user_id'    => auth()->id(),
         //     'channel_id' => $request->channel_id,
@@ -63,7 +61,7 @@ class ThreadsController extends Controller
         //     'title'      => $request->title,
         // ]);
         auth()->user()->makeThread($request->toArray());
-        return redirect('/threads');
+        return redirect('/threads')->with('flash', 'Your Thread has been published');
     }
 
     /**
@@ -74,10 +72,7 @@ class ThreadsController extends Controller
      */
     public function show($channelId, Thread $thread)
     {
-        return view('threads.show', [
-            'thread'  => $thread,
-            'replies' => $thread->replies()->paginate(20),
-        ]);
+        return view('threads.show', compact('thread'));
     }
 
     /**
@@ -114,7 +109,7 @@ class ThreadsController extends Controller
         $this->authorize('update', $thread);
 
         $thread->delete();
-        return redirect('/threads');
+        return redirect('/threads')->with('flash', 'The thread has been deleted boss');
     }
 
     /**
@@ -132,5 +127,4 @@ class ThreadsController extends Controller
 
         return $threads->get();
     }
-
 }

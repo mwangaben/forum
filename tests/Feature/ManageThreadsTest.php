@@ -47,7 +47,6 @@ class ManageThreadsTest extends TestCase
     {
         $this->publishThread(['title' => null])
             ->assertSessionHasErrors('title');
-
     }
 
     /** @test **/
@@ -72,7 +71,7 @@ class ManageThreadsTest extends TestCase
     /** @test **/
     public function unauthorised_user_can_not_delete_a_thread()
     {
-    	$this->withExceptionHandling();
+        $this->withExceptionHandling();
 
         $thread = create(Thread::class);
         $this->delete($thread->path())
@@ -80,7 +79,6 @@ class ManageThreadsTest extends TestCase
 
         $this->signIn();
         $this->delete($thread->path())->assertStatus(403);
-
     }
 
     /** @test **/
@@ -89,6 +87,7 @@ class ManageThreadsTest extends TestCase
         $this->signIn();
         $thread = create(Thread::class, ['user_id' => auth()->id()]);
         $reply  = create(Reply::class, ['thread_id' => $thread->id]);
+        $this->post('replies/' . $reply->id . '/favorites');
 
         $this->json('DELETE', $thread->path());
         $this->assertDatabaseMissing('threads', [
@@ -99,7 +98,38 @@ class ManageThreadsTest extends TestCase
         $this->assertDatabaseMissing('replies', [
             'body' => $reply->body,
         ]);
+
+        $this->assertDatabaseMissing('activities', [
+            'subject_id'   => $thread->id,
+            'subject_type' => get_class($thread),
+        ]);
+
+        $this->assertDatabaseMissing('activities', [
+            'subject_id'   => $reply->id,
+            'subject_type' => get_class($reply),
+        ]);
+
+        $this->assertDatabaseMissing('favorites', [
+            'favorited_id'   => $reply->id,
+            'favorited_type' => get_class($reply),
+        ]);
     }
+
+      /** @test **/ 
+    function it_anauthenticated_user_can_fetch_replies_for_a_thread()
+    {
+       $thread = create('App\Thread');
+       $reply = create('App\Reply', ['thread_id' => $thread->id], 2);
+       $response = $this->getJson($thread->path(). '/replies')->json();
+       $this->assertCount(1, $response['data']);
+       $this->assertEquals(2, $response['total']);
+
+    }
+
+
+
+
+    
 
     protected function publishThread($overrides = [])
     {
@@ -108,7 +138,5 @@ class ManageThreadsTest extends TestCase
         $thread = make(Thread::class, $overrides);
 
         return $this->post('/threads', $thread->toArray());
-
     }
-
 }
