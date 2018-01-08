@@ -30,7 +30,6 @@ class User extends Authenticatable
     /**
      * Override the default route key
      */
-    
     public function getRouteKeyName()
     {
         return 'name';

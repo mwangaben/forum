@@ -12,14 +12,15 @@ class RepliesController extends Controller
     {
         $this->middleware('auth')->except('index');
     }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($channelId, THread $thread)
+    public function index($channelId, Thread $thread)
     {
-        return $thread->replies()->paginate(1);
+        return $thread->replies()->paginate(20);
     }
 
     /**
@@ -43,11 +44,12 @@ class RepliesController extends Controller
     public function store($channelId, Thread $thread)
     {
         $this->validate(request(), ['body' => 'required']);
+        
         $reply = $thread->addReply([
-            'body'    => request('body'),
+            'body' => request('body'),
             'user_id' => auth()->id(),
         ]);
-        
+
         if (request()->expectsJson()) {
             return $reply->load('owner');
         }
@@ -92,7 +94,6 @@ class RepliesController extends Controller
             'body' => 'required',
         ]);
         $reply->update(['body' => $request->body]);
-
     }
 
     /**
@@ -106,7 +107,7 @@ class RepliesController extends Controller
         $this->authorize('update', $reply);
 
         $reply->delete();
-        
+
         if (request()->expectsJson()) {
             return response(['status' => 'Reply deleted']);
         }

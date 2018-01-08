@@ -29,6 +29,7 @@ class ReplyTest extends TestCase
             ->delete('replies/' . $reply->id)
             ->assertStatus(403);
     }
+
     /** @test **/
     public function unauthorized_can_not_update_a_reply()
     {
@@ -43,28 +44,28 @@ class ReplyTest extends TestCase
     }
 
     /** @test **/
-    public function authorized_user_can_delete_a_reply()
+    public function authorized_user_an_delete_a_reply()
     {
         $this->signIn();
         $reply = create(Reply::class, ['user_id' => auth()->id()]);
 
         $this->delete('replies/' . $reply->id);
         $this->assertDatabaseMissing('replies', [
-            'body'    => $reply->body,
+            'body' => $reply->body,
             'user_id' => auth()->id(),
-        ]);
-
+            ]);
+        $this->assertEquals(0, $reply->thread->fresh()->replies_count);
     }
 
-      /** @test **/ 
-    function it_authorised_user_can_update_the_reply()
+    /** @test **/
+    public function it_authorised_user_can_update_the_reply()
     {
         $this->signIn();
         $reply = create(Reply::class, ['user_id' => auth()->id()]) ;
 
-        $updatedReply  = 'Let us talk later' ;
+        $updatedReply = 'Let us talk later' ;
 
-        $this->patch('replies/'.$reply->id, ['body' => $updatedReply]);
-        $this->assertDatabaseHas('replies',['body' => $updatedReply]);     
+        $this->patch('replies/' . $reply->id, ['body' => $updatedReply]);
+        $this->assertDatabaseHas('replies', ['body' => $updatedReply]);
     }
 }

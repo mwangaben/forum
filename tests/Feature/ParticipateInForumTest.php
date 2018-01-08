@@ -21,15 +21,16 @@ class ParticipateInForumTest extends TestCase
         // And i have a Thread
         $thread = create(Thread::class);
 
-
         // When i post a reply on a thread
         $reply = make(Reply::class);
-        $this->post($thread->path() .'/replies', $reply->toArray());
+        $this->post($thread->path() . '/replies', $reply->toArray());
 
-        // Then I should see the reply
-        $this->get($thread->path())
-               ->assertSee($reply->body);
+        // Then I should see the reply being saved i the database
+        $this->assertDatabaseHas('replies', ['body' => $reply->body]);
+
+        $this->assertEquals(1, $thread->fresh()->replies_count);
     }
+
     /** @test **/
     public function unauthenticated_user_can_not_add_replies_on_threads()
     {
@@ -37,7 +38,7 @@ class ParticipateInForumTest extends TestCase
         $thread = factory(Reply::class)->create();
 
         $reply = factory(Reply::class)->make();
-        $this->post($thread->path(). '/replies', $reply->toArray());
+        $this->post($thread->path() . '/replies', $reply->toArray());
     }
 
     /** @test **/
@@ -48,7 +49,7 @@ class ParticipateInForumTest extends TestCase
         $thread = create(Thread::class);
 
         $reply = make(Reply::class, ['body' => null]);
-        $this->post($thread->path(). '/replies', $reply->toArray())
+        $this->post($thread->path() . '/replies', $reply->toArray())
              ->assertSessionHasErrors('body');
     }
 
@@ -65,12 +66,11 @@ class ParticipateInForumTest extends TestCase
 
         $this->assertDatabaseMissing('threads', [
               'title' => $thread->title,
-              'body'  => $thread->body
+              'body' => $thread->body
             ]);
 
-        $reply =  make('App\Reply', ['user_id' => auth()->id()]);
-        $this->post($thread->path().'/replies', $reply->toArray());
-               
+        $reply = make('App\Reply', ['user_id' => auth()->id()]);
+        $this->post($thread->path() . '/replies', $reply->toArray());
 
         // $this->assertRedirect('thread');
           // $this->asse

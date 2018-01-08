@@ -30,7 +30,7 @@ trait Favourable
 
     public function getFavoritesCountAttribute()
     {
-        return $this->favorites->count();
+        return $this->favorites()->count();
     }
 
     public function getIsFavoritedAttribute()

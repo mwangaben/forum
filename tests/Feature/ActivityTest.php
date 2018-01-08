@@ -20,9 +20,9 @@ class ActivityTest extends TestCase
         $thread = create('App\Thread', ['user_id' => auth()->id()]);
 
         $this->assertDatabaseHas('activities', [
-            'type'         => 'thread_created',
-            'user_id'      => auth()->id(),
-            'subject_id'   => $thread->id,
+            'type' => 'thread_created',
+            'user_id' => auth()->id(),
+            'subject_id' => $thread->id,
             'subject_type' => get_class($thread),
         ]);
 
@@ -38,9 +38,9 @@ class ActivityTest extends TestCase
         $reply = create('App\Reply', ['user_id' => auth()->id()]);
 
         $this->assertDatabaseHas('activities', [
-            'type'         => 'reply_created',
-            'user_id'      => auth()->id(),
-            'subject_id'   => $reply->id,
+            'type' => 'reply_created',
+            'user_id' => auth()->id(),
+            'subject_id' => $reply->id,
             'subject_type' => get_class($reply),
         ]);
         $this->assertEquals(2, Activity::count());

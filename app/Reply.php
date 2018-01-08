@@ -20,14 +20,33 @@ class Reply extends Model
         static::deleting(function ($reply) {
             $reply->favorites->each->delete();
         });
+
+        static::created(function ($reply) {
+            $reply->thread->increment('replies_count');
+        });
+
+        static::deleted(function ($reply) {
+            $reply->thread->decrement('replies_count');
+        });
     }
 
+    /**
+     * get the owner of the reply
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+
+     */
     public function owner()
     {
-        
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /**
+     * grab the thread associated with a reply
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+
+     */
     public function thread()
     {
         return $this->belongsTo(Thread::class);

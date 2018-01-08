@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Notifications\DatabaseNotification;
+use Ramsey\Uuid\Uuid;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -33,7 +36,6 @@ $factory->define(App\Thread::class, function (Faker\Generator $faker) {
           },
         'title' => $faker->sentence,
         'body' => $faker->paragraph,
-        
     ];
 });
 
@@ -46,7 +48,6 @@ $factory->define(App\Reply::class, function (Faker\Generator $faker) {
               return factory('App\Thread')->create()->id;
           },
         'body' => $faker->paragraph,
-      
     ];
 });
 
@@ -56,6 +57,22 @@ $factory->define(App\Channel::class, function (Faker\Generator $faker) {
     return [
           'name' => $word,
           'slug' => $word
-      
+    ];
+});
+
+$factory->define(DatabaseNotification::class, function (Faker\Generator $faker) {
+    $word = $faker->word;
+
+    return [
+        'id' => Uuid::uuid4()->toString(),
+        'type' => 'App\Notifications\ThreadWasUpdate',
+
+        'notifiable_id' => function () {
+            return auth()->id() ?: factory('App\User')->create()->id;
+        },
+
+        'notifiable_type' => 'App\User',
+
+        'data' => ['foo' => 'bar']
     ];
 });

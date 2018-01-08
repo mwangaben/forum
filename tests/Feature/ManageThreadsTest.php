@@ -86,13 +86,13 @@ class ManageThreadsTest extends TestCase
     {
         $this->signIn();
         $thread = create(Thread::class, ['user_id' => auth()->id()]);
-        $reply  = create(Reply::class, ['thread_id' => $thread->id]);
+        $reply = create(Reply::class, ['thread_id' => $thread->id]);
         $this->post('replies/' . $reply->id . '/favorites');
 
         $this->json('DELETE', $thread->path());
         $this->assertDatabaseMissing('threads', [
             'thread_title' => $thread->title,
-            'thread_body'  => $thread->body,
+            'thread_body' => $thread->body,
         ]);
 
         $this->assertDatabaseMissing('replies', [
@@ -100,36 +100,30 @@ class ManageThreadsTest extends TestCase
         ]);
 
         $this->assertDatabaseMissing('activities', [
-            'subject_id'   => $thread->id,
+            'subject_id' => $thread->id,
             'subject_type' => get_class($thread),
         ]);
 
         $this->assertDatabaseMissing('activities', [
-            'subject_id'   => $reply->id,
+            'subject_id' => $reply->id,
             'subject_type' => get_class($reply),
         ]);
 
         $this->assertDatabaseMissing('favorites', [
-            'favorited_id'   => $reply->id,
+            'favorited_id' => $reply->id,
             'favorited_type' => get_class($reply),
         ]);
     }
 
-      /** @test **/ 
-    function it_anauthenticated_user_can_fetch_replies_for_a_thread()
+    /** @test **/
+    public function it_anauthenticated_user_can_fetch_replies_for_a_thread()
     {
-       $thread = create('App\Thread');
-       $reply = create('App\Reply', ['thread_id' => $thread->id], 2);
-       $response = $this->getJson($thread->path(). '/replies')->json();
-       $this->assertCount(1, $response['data']);
-       $this->assertEquals(2, $response['total']);
-
+        $thread = create('App\Thread');
+        $reply = create('App\Reply', ['thread_id' => $thread->id], 30);
+        $response = $this->getJson($thread->path() . '/replies')->json();
+        $this->assertCount(20, $response['data']);
+        $this->assertEquals(30, $response['total']);
     }
-
-
-
-
-    
 
     protected function publishThread($overrides = [])
     {

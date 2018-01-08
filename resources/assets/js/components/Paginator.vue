@@ -6,7 +6,7 @@
             </a>
         </li>
         <li v-show="nextUrl">
-            <a href="#" aria-label="Next" @click.prevent="page++">
+            <a href="#" aria-label="Next" rel="next" @click.prevent="page++">
                 <span aria-hidden="true">Next&raquo;</span>
             </a>
         </li>
@@ -29,7 +29,11 @@ export default {
          this.page = this.dataSet.current_page;
          this.nextUrl =  this.dataSet.next_page_url;
          this.prevUrl =  this.dataSet.prev_page_url;	
-    	}
+        },
+        
+        page(){
+            this.broadcast().updateUrl();
+        }
     },
 
     computed: {
@@ -39,6 +43,15 @@ export default {
 
     },
 
-    methods: {}
+    methods: {
+
+        broadcast(){
+           return  this.$emit('changed', this.page);
+        },
+
+        updateUrl(){
+            history.pushState(null, null, '?page=' + this.page);
+        }
+    }
 }
 </script>
